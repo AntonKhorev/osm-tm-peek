@@ -1,3 +1,8 @@
+const $oldTmDetails=document.getElementById('osm-tm-peek-details')
+if ($oldTmDetails) {
+	$oldTmDetails.remove()
+}
+
 const $browseSection=document.querySelector('#sidebar_content > .browse-section')
 if ($browseSection) {
 	let hotosmProjectId
@@ -23,9 +28,10 @@ function matchHotosmProjectId(s) {
 }
 
 function makeProjectDetails(id) {
+	const $tmDetails=document.createElement('details')
+	$tmDetails.id='osm-tm-peek-details'
 	const $tmSummary=document.createElement('summary')
 	$tmSummary.textContent=`#hotosm-project-${id}`
-	const $tmDetails=document.createElement('details')
 	$tmDetails.append($tmSummary)
 	const $homeDiv=document.createElement('div')
 	const $homeLink=document.createElement('a')
