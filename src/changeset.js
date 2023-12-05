@@ -11,10 +11,7 @@ if ($browseSection) {
 	}
 	const $discussion=$browseSection.querySelector(':scope > .row')
 	if (hotosmProjectId!=null && $discussion) {
-		const $tmSummary=document.createElement('summary')
-		$tmSummary.textContent=`#hotosm-project-${hotosmProjectId}`
-		const $tmDetails=document.createElement('details')
-		$tmDetails.append($tmSummary)
+		const $tmDetails=makeProjectDetails(hotosmProjectId)
 		$discussion.prepend($tmDetails)
 	}
 }
@@ -23,4 +20,18 @@ function matchHotosmProjectId(s) {
 	const match=s.match(/#hotosm-project-(\d+)/)
 	if (!match) return
 	return match[1]
+}
+
+function makeProjectDetails(id) {
+	const $tmSummary=document.createElement('summary')
+	$tmSummary.textContent=`#hotosm-project-${id}`
+	const $tmDetails=document.createElement('details')
+	$tmDetails.append($tmSummary)
+	const $homeDiv=document.createElement('div')
+	const $homeLink=document.createElement('a')
+	$homeLink.href=`https://tasks.hotosm.org/projects/${id}`
+	$homeLink.textContent=`project homepage`
+	$homeDiv.append($homeLink)
+	$tmDetails.append($homeDiv)
+	return $tmDetails
 }
