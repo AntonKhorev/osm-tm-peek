@@ -1,0 +1,12 @@
+{
+	"manifest_version": 3,
+	"version": "0.0.0",
+	"name": "OSM Tasking Manager Peek",
+
+	"content_scripts": [
+		{
+			"matches": ["https://www.openstreetmap.org/changeset/*"],
+			"js": ["changeset.js"]
+		}
+	]
+}
