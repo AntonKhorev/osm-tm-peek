@@ -30,6 +30,7 @@ function matchHotosmProjectId(s) {
 function makeProjectDetails(id) {
 	const $tmDetails=document.createElement('details')
 	$tmDetails.id='osm-tm-peek-details'
+	$tmDetails.classList.add('mb-3')
 	const $tmSummary=document.createElement('summary')
 	$tmSummary.textContent=`#hotosm-project-${id}`
 	$tmDetails.append($tmSummary)
