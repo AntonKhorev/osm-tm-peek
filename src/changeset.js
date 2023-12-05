@@ -28,17 +28,27 @@ function matchHotosmProjectId(s) {
 }
 
 function makeProjectDetails(id) {
-	const $tmDetails=document.createElement('details')
-	$tmDetails.id='osm-tm-peek-details'
-	$tmDetails.classList.add('mb-3')
-	const $tmSummary=document.createElement('summary')
-	$tmSummary.textContent=`#hotosm-project-${id}`
-	$tmDetails.append($tmSummary)
-	const $homeDiv=document.createElement('div')
-	const $homeLink=document.createElement('a')
-	$homeLink.href=`https://tasks.hotosm.org/projects/${id}`
-	$homeLink.textContent=`project homepage`
-	$homeDiv.append($homeLink)
-	$tmDetails.append($homeDiv)
-	return $tmDetails
+	const $details=document.createElement('details')
+	$details.id='osm-tm-peek-details'
+	$details.classList.add('mb-3')
+	{
+		const $summary=document.createElement('summary')
+		$summary.textContent=`#hotosm-project-${id}`
+		$details.append($summary)
+	}{
+		const $div=document.createElement('div')
+		const $a=document.createElement('a')
+		$a.href=`https://tasks.hotosm.org/projects/${id}`
+		$a.textContent=`project homepage`
+		$div.append($a)
+		$details.append($div)
+	}{
+		const $div=document.createElement('div')
+		const $a=document.createElement('a')
+		$a.href=`https://tasking-manager-tm4-production-api.hotosm.org/api/v2/projects/${id}`
+		$a.textContent=`project json info`
+		$div.append($a)
+		$details.append($div)
+	}
+	return $details
 }
