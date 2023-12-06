@@ -63,7 +63,6 @@ function makeProjectDetails(id) {
 async function loadProjectDetails() {
 	const $details=this
 	if (!$details.open) return // TODO cancel on close
-	// if ($details.dataset.loaded) return // TODO either this or cache in background script
 	const id=$details.dataset.id
 	if (id==null) return
 	const $article=$details.querySelector(':scope > article')

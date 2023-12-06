@@ -1,5 +1,7 @@
 import getHotosmApiProjectUrl from './tm.js'
 
+const projectDataCache=new Map()
+
 browser.runtime.onMessage.addListener(message=>{
 	if (message.action=='fetchProjectData') {
 		// can't do it from the content script because CSP header: content-security-policy: ... connect-src ...
@@ -9,6 +11,13 @@ browser.runtime.onMessage.addListener(message=>{
 })
 
 async function fetchProjectData(id) {
+	const now=Date.now()
+	if (projectDataCache.has(id)) {
+		const {timestamp,data}=projectDataCache.get(id)
+		if (timestamp>=now-5*60*1000) {
+			return data
+		}
+	}
 	let data
 	try {
 		const response=await fetch(getHotosmApiProjectUrl(id))
@@ -17,6 +26,6 @@ async function fetchProjectData(id) {
 	} catch {
 		return null
 	}
-	// TODO cache data
+	projectDataCache.set(id,{timestamp:now,data})
 	return data
 }
