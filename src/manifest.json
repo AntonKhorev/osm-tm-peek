@@ -11,6 +11,11 @@
 		{
 			"matches": ["https://www.openstreetmap.org/*"],
 			"js": ["changeset.js"]
+		},
+		{
+			"matches": ["https://www.openstreetmap.org/*"],
+			"js": ["init.js"],
+			"run_at": "document_start"
 		}
 	],
 	"web_accessible_resources": [

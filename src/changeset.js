@@ -5,8 +5,11 @@ const {default:getHotosmApiProjectUrl}=await import(browser.runtime.getURL('tm.j
 const $sidebarContent=document.getElementById('sidebar_content')
 if (!$sidebarContent) return
 
+let aoiLayer
+
 insertDetails()
 new MutationObserver(()=>{
+	clearAoiLayer()
 	insertDetails()
 }).observe($sidebarContent,{childList:true})
 
@@ -75,6 +78,7 @@ function makeProjectDetails(id) {
 }
 
 async function loadProjectDetails() {
+	clearAoiLayer()
 	const $details=this
 	if (!$details.open) return // TODO cancel on close
 	const id=$details.dataset.id
@@ -95,6 +99,12 @@ async function loadProjectDetails() {
 		$article.replaceChildren($errorMessage)
 	} else {
 		$article.replaceChildren()
+		if (window.osmTmPeekHookedMap && data?.aoiBBOX) {
+			const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
+			const bounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
+			aoiLayer=window.wrappedJSObject.L.rectangle(bounds).addTo(window.osmTmPeekHookedMap)
+			// window.osmTmPeekHookedMap.wrappedJSObject.fitBounds(bounds)
+		}
 		if (data?.projectInfo?.name) {
 			const $name=document.createElement('h5')
 			$name.classList.add('mt-2')
@@ -179,6 +189,11 @@ async function loadProjectDetails() {
 			$article.append($card)
 		}
 	}
+}
+
+function clearAoiLayer() {
+	aoiLayer?.remove()
+	aoiLayer=undefined
 }
 
 })()
