@@ -106,23 +106,24 @@ async function loadProjectDetails() {
 			$article.append($name)
 		}
 		if (window.osmTmPeekHookedMap) {
-			let bounds
+			let aoiBounds
 			if (data?.areaOfInterest) {
 				const geometry=cloneInto(data.areaOfInterest,window)
 				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry)
 			}
 			if (data?.aoiBBOX) {
 				const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
-				bounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
+				aoiBounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
 				if (!aoiLayer) {
-					aoiLayer=window.wrappedJSObject.L.rectangle(bounds)
+					aoiLayer=window.wrappedJSObject.L.rectangle(aoiBounds)
 				}
 			}
 			aoiLayer?.addTo(window.osmTmPeekHookedMap)
 			const $div=document.createElement('div')
-			$div.classList.add('d-flex','mb-2','align-items-center')
+			$div.classList.add('d-flex','mb-2','align-items-center','gap-1')
+			const $countries=document.createElement('span')
+			$countries.classList.add('me-auto')
 			if (Array.isArray(data?.countryTag)) {
-				const $countries=document.createElement('span')
 				for (const country of data.countryTag) {
 					if ($countries.childElementCount) {
 						$countries.append(`, `)
@@ -131,16 +132,33 @@ async function loadProjectDetails() {
 					$country.textContent=country
 					$countries.append($country)
 				}
-				$div.append($countries)
 			}
-			if (bounds) {
+			$div.append($countries)
+			const flyOptions=cloneInto({duration:1},window)
+			if (window.osmTmPeekHookedMap.wrappedJSObject._object) {
 				const $fit=document.createElement('button')
-				$fit.classList.add('btn','btn-primary','btn-sm','ms-auto')
-				$fit.textContent='Fit'
+				$fit.classList.add('btn','btn-outline-warning','btn-sm','border-2')
+				$fit.style.borderStyle='dashed'
+				$fit.textContent='Cset'
+				$fit.dataset.bsTitle=`Zoom to changeset`
 				$fit.onclick=()=>{
-					window.osmTmPeekHookedMap.wrappedJSObject.fitBounds(bounds)
+					const changesetBounds=window.osmTmPeekHookedMap.wrappedJSObject._objectLayer.getBounds()
+					window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(changesetBounds,flyOptions)
 				}
 				$div.append($fit)
+				new window.wrappedJSObject.bootstrap.Tooltip($fit)
+			}
+			if (aoiBounds) {
+				const $fit=document.createElement('button')
+				$fit.classList.add('btn','btn-outline-primary','btn-sm','border-2')
+				$fit.style.borderStyle='dashed'
+				$fit.textContent='AOI'
+				$fit.dataset.bsTitle=`Zoom to project area of interest`
+				$fit.onclick=()=>{
+					window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(aoiBounds,flyOptions)
+				}
+				$div.append($fit)
+				new window.wrappedJSObject.bootstrap.Tooltip($fit)
 			}
 			$article.append($div)
 		}
