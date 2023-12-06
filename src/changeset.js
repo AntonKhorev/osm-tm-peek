@@ -90,6 +90,7 @@ async function loadProjectDetails() {
 			let $shortDescription,$longDescription
 			if (data?.projectInfo?.shortDescription) {
 				$shortDescription=document.createElement('div')
+				$shortDescription.classList.add('mb-3')
 				$shortDescription.id='osm-tm-peek-details-short-description'
 				$shortDescription.style.whiteSpace='pre-wrap'
 				$shortDescription.textContent=data.projectInfo.shortDescription
@@ -97,6 +98,7 @@ async function loadProjectDetails() {
 			}
 			if (data?.projectInfo?.description) {
 				$longDescription=document.createElement('div')
+				$longDescription.classList.add('mb-3')
 				$longDescription.id='osm-tm-peek-details-long-description'
 				$longDescription.style.whiteSpace='pre-wrap'
 				$longDescription.textContent=data.projectInfo.description
@@ -123,6 +125,43 @@ async function loadProjectDetails() {
 				$shortDescription.append(` `,$showMore)
 				$longDescription.append(` `,$showLess)
 			}
+		}
+		if (data?.organisationName || data?.organisationLogo) {
+			const $card=document.createElement('div')
+			$card.classList.add('card')
+			const $row=document.createElement('div')
+			$row.classList.add('row','g-0','align-items-center')
+			const $bodyContainer=document.createElement('div')
+			if (data?.organisationLogo) {
+				const $logoContainer=document.createElement('div')
+				$logoContainer.classList.add('col-4')
+				const $logo=document.createElement('img')
+				$logo.classList.add('img-fluid','rounded-start')
+				$logo.src=data.organisationLogo
+				$logoContainer.append($logo)
+				$row.append($logoContainer)
+				$bodyContainer.classList.add('col-8')
+			} else {
+				$bodyContainer.classList.add('col-12')
+			}
+			const $body=document.createElement('div')
+			$body.classList.add('card-body')
+			if (data?.organisationName) {
+				let $name
+				if (data?.organisationSlug) {
+					$name=document.createElement('a')
+					$name.classList.add('fs-6','stretched-link')
+					$name.href=`https://tasks.hotosm.org/organisations/${data.organisationSlug}`
+				} else {
+					$name=document.createElement('span')
+				}
+				$name.textContent=data.organisationName
+				$body.append($name)
+			}
+			$bodyContainer.append($body)
+			$row.append($bodyContainer)
+			$card.append($row)
+			$article.append($card)
 		}
 	}
 }
