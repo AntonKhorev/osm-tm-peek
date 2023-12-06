@@ -47,17 +47,14 @@ function makeProjectDetails(id) {
 		$details.append($article)
 	}{
 		const $div=document.createElement('div')
-		const $a=document.createElement('a')
-		$a.href=`https://tasks.hotosm.org/projects/${id}`
-		$a.textContent=`project homepage`
-		$div.append($a)
-		$details.append($div)
-	}{
-		const $div=document.createElement('div')
-		const $a=document.createElement('a')
-		$a.href=getHotosmApiProjectUrl(id)
-		$a.textContent=`project json info`
-		$div.append($a)
+		$div.classList.add('secondary-actions')
+		const $aHome=document.createElement('a')
+		$aHome.href=`https://tasks.hotosm.org/projects/${id}`
+		$aHome.textContent=`Homepage`
+		const $aData=document.createElement('a')
+		$aData.href=getHotosmApiProjectUrl(id)
+		$aData.textContent=`JSON data`
+		$div.append($aHome,` · `,$aData)
 		$details.append($div)
 	}
 	return $details
