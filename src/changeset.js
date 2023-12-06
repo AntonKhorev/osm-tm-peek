@@ -83,7 +83,7 @@ async function loadProjectDetails() {
 	if (!$article) return
 	{
 		const $spinner=document.createElement('div')
-		$spinner.classList.add('text-center')
+		$spinner.classList.add('mt-2','text-center')
 		$spinner.innerHTML=`<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>`
 		$article.replaceChildren($spinner)
 	}
@@ -97,6 +97,7 @@ async function loadProjectDetails() {
 		$article.replaceChildren()
 		if (data?.projectInfo?.name) {
 			const $name=document.createElement('h5')
+			$name.classList.add('mt-2')
 			$name.textContent=data.projectInfo.name
 			$article.append($name)
 		}
