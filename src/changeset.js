@@ -86,6 +86,12 @@ async function loadProjectDetails() {
 			$name.textContent=data.projectInfo.name
 			$article.append($name)
 		}
+		if (data?.projectInfo?.shortDescription) {
+			const $shortDescription=document.createElement('div')
+			$shortDescription.style.whiteSpace='pre-wrap'
+			$shortDescription.textContent=data.projectInfo.shortDescription
+			$article.append($shortDescription)
+		}
 	}
 }
 
