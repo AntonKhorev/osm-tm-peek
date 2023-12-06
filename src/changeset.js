@@ -99,23 +99,50 @@ async function loadProjectDetails() {
 		$article.replaceChildren($errorMessage)
 	} else {
 		$article.replaceChildren()
-		if (window.osmTmPeekHookedMap) {
-			if (data?.areaOfInterest) {
-				const geometry=cloneInto(data.areaOfInterest,window)
-				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry)
-			} else if (data?.aoiBBOX) {
-				const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
-				const bounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
-				aoiLayer=window.wrappedJSObject.L.rectangle(bounds)
-				// window.osmTmPeekHookedMap.wrappedJSObject.fitBounds(bounds)
-			}
-			aoiLayer?.addTo(window.osmTmPeekHookedMap)
-		}
 		if (data?.projectInfo?.name) {
 			const $name=document.createElement('h5')
 			$name.classList.add('mt-2')
 			$name.textContent=data.projectInfo.name
 			$article.append($name)
+		}
+		if (window.osmTmPeekHookedMap) {
+			let bounds
+			if (data?.areaOfInterest) {
+				const geometry=cloneInto(data.areaOfInterest,window)
+				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry)
+			}
+			if (data?.aoiBBOX) {
+				const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
+				bounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
+				if (!aoiLayer) {
+					aoiLayer=window.wrappedJSObject.L.rectangle(bounds)
+				}
+			}
+			aoiLayer?.addTo(window.osmTmPeekHookedMap)
+			const $div=document.createElement('div')
+			$div.classList.add('d-flex','mb-2','align-items-center')
+			if (Array.isArray(data?.countryTag)) {
+				const $countries=document.createElement('span')
+				for (const country of data.countryTag) {
+					if ($countries.childElementCount) {
+						$countries.append(`, `)
+					}
+					const $country=document.createElement('strong')
+					$country.textContent=country
+					$countries.append($country)
+				}
+				$div.append($countries)
+			}
+			if (bounds) {
+				const $fit=document.createElement('button')
+				$fit.classList.add('btn','btn-primary','btn-sm','ms-auto')
+				$fit.textContent='Fit'
+				$fit.onclick=()=>{
+					window.osmTmPeekHookedMap.wrappedJSObject.fitBounds(bounds)
+				}
+				$div.append($fit)
+			}
+			$article.append($div)
 		}
 		if (data?.projectInfo?.shortDescription || data?.projectInfo?.longDescription) {
 			let $shortDescription,$longDescription
