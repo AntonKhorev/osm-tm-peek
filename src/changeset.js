@@ -86,11 +86,43 @@ async function loadProjectDetails() {
 			$name.textContent=data.projectInfo.name
 			$article.append($name)
 		}
-		if (data?.projectInfo?.shortDescription) {
-			const $shortDescription=document.createElement('div')
-			$shortDescription.style.whiteSpace='pre-wrap'
-			$shortDescription.textContent=data.projectInfo.shortDescription
-			$article.append($shortDescription)
+		if (data?.projectInfo?.shortDescription || data?.projectInfo?.longDescription) {
+			let $shortDescription,$longDescription
+			if (data?.projectInfo?.shortDescription) {
+				$shortDescription=document.createElement('div')
+				$shortDescription.id='osm-tm-peek-details-short-description'
+				$shortDescription.style.whiteSpace='pre-wrap'
+				$shortDescription.textContent=data.projectInfo.shortDescription
+				$article.append($shortDescription)
+			}
+			if (data?.projectInfo?.description) {
+				$longDescription=document.createElement('div')
+				$longDescription.id='osm-tm-peek-details-long-description'
+				$longDescription.style.whiteSpace='pre-wrap'
+				$longDescription.textContent=data.projectInfo.description
+				$article.append($longDescription)
+			}
+			if ($shortDescription && $longDescription) {
+				$longDescription.hidden=true
+				const $showMore=document.createElement('a')
+				$showMore.href='#osm-tm-peek-details-long-description'
+				$showMore.textContent=`more...`
+				$showMore.onclick=ev=>{
+					ev.preventDefault()
+					$shortDescription.hidden=true
+					$longDescription.hidden=false
+				}
+				const $showLess=document.createElement('a')
+				$showLess.href='#osm-tm-peek-details-short-description'
+				$showLess.textContent=`less...`
+				$showLess.onclick=ev=>{
+					ev.preventDefault()
+					$shortDescription.hidden=false
+					$longDescription.hidden=true
+				}
+				$shortDescription.append(` `,$showMore)
+				$longDescription.append(` `,$showLess)
+			}
 		}
 	}
 }
