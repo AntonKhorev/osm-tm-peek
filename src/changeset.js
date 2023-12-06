@@ -96,7 +96,7 @@ async function loadProjectDetails() {
 				$shortDescription.textContent=data.projectInfo.shortDescription
 				$article.append($shortDescription)
 			}
-			if (data?.projectInfo?.description) {
+			if (data?.projectInfo?.description && data?.projectInfo?.description!=data?.projectInfo?.shortDescription) {
 				$longDescription=document.createElement('div')
 				$longDescription.classList.add('mb-3')
 				$longDescription.id='osm-tm-peek-details-long-description'
