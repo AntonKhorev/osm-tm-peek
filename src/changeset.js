@@ -13,6 +13,7 @@ if ($browseSection) {
 	const $tagsContainer=$browseSection.querySelector(':scope > .rounded')
 	if ($tagsContainer) {
 		const $tags=$browseSection.querySelector('table.browse-tag-list')
+		// TODO parse tags
 	}
 	const $discussion=$browseSection.querySelector(':scope > .row')
 	if (hotosmProjectId!=null && $discussion) {
@@ -30,13 +31,16 @@ function matchHotosmProjectId(s) {
 function makeProjectDetails(id) {
 	const $details=document.createElement('details')
 	$details.id='osm-tm-peek-details'
-	$details.classList.add('mb-3')
 	$details.dataset.id=id
+	$details.classList.add('mb-3')
 	$details.ontoggle=loadProjectDetails
 	{
 		const $summary=document.createElement('summary')
 		$summary.textContent=`#hotosm-project-${id}`
 		$details.append($summary)
+	}{
+		const $article=document.createElement('article')
+		$details.append($article)
 	}{
 		const $div=document.createElement('div')
 		const $a=document.createElement('a')
@@ -58,34 +62,34 @@ function makeProjectDetails(id) {
 async function loadProjectDetails() {
 	const $details=this
 	if (!$details.open) return // TODO cancel on close
-	if ($details.dataset.loaded) return
+	// if ($details.dataset.loaded) return // TODO either this or cache in background script
 	const id=$details.dataset.id
 	if (id==null) return
-	const $summary=$details.querySelector(':scope > summary')
-	if (!$summary) return
-	const $spinner=document.createElement('div')
-	$spinner.classList.add('text-center')
-	$spinner.innerHTML=`<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>`
-	$summary.after($spinner)
-	let data
-	try {
-		const response=await fetch(getHotosmApiProjectUrl(id))
-		if (!response.ok) throw new Error
-		data=await response.json()
-	} catch {
+	const $article=$details.querySelector(':scope > article')
+	if (!$article) return
+	{
+		const $spinner=document.createElement('div')
+		$spinner.classList.add('text-center')
+		$spinner.innerHTML=`<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>`
+		$article.replaceChildren($spinner)
+	}
+	const data=await browser.runtime.sendMessage({action:'fetchProjectData',id})
+	if (data==null) {
 		const $errorMessage=document.createElement('div')
 		$errorMessage.classList.add('alert','alert-danger')
-		$errorMessage.textContent=`failed to load project info`
-		$spinner.replaceWith($errorMessage)
-		return
-	}
-	if (data?.projectInfo?.name) {
-		const $name=document.createElement('h5')
-		$name.textContent=data.projectInfo.name
-		$spinner.replaceWith($name)
+		$errorMessage.textContent=`failed to load project data`
+		$article.replaceChildren($errorMessage)
+	} else {
+		$article.replaceChildren()
+		if (data?.projectInfo?.name) {
+			const $name=document.createElement('h5')
+			$name.textContent=data.projectInfo.name
+			$article.append($name)
+		}
 	}
 }
 
 function getHotosmApiProjectUrl(id) {
-	return `https://tasking-manager-tm4-production-api.hotosm.org/api/v2/projects/${id}`
+	// return `https://tasking-manager-tm4-production-api.hotosm.org/api/v2/projects/${id}`
+	return `https://tasking-manager-tm4-production-api.hotosm.org:443/api/v2/projects/${id}/`
 }
