@@ -99,11 +99,17 @@ async function loadProjectDetails() {
 		$article.replaceChildren($errorMessage)
 	} else {
 		$article.replaceChildren()
-		if (window.osmTmPeekHookedMap && data?.aoiBBOX) {
-			const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
-			const bounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
-			aoiLayer=window.wrappedJSObject.L.rectangle(bounds).addTo(window.osmTmPeekHookedMap)
-			// window.osmTmPeekHookedMap.wrappedJSObject.fitBounds(bounds)
+		if (window.osmTmPeekHookedMap) {
+			if (data?.areaOfInterest) {
+				const geometry=cloneInto(data.areaOfInterest,window)
+				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry)
+			} else if (data?.aoiBBOX) {
+				const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
+				const bounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
+				aoiLayer=window.wrappedJSObject.L.rectangle(bounds)
+				// window.osmTmPeekHookedMap.wrappedJSObject.fitBounds(bounds)
+			}
+			aoiLayer?.addTo(window.osmTmPeekHookedMap)
 		}
 		if (data?.projectInfo?.name) {
 			const $name=document.createElement('h5')
