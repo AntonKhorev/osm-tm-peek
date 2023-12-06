@@ -2,27 +2,41 @@
 
 const {default:getHotosmApiProjectUrl}=await import(browser.runtime.getURL('tm.js'))
 
-const $oldTmDetails=document.getElementById('osm-tm-peek-details')
-if ($oldTmDetails) {
-	$oldTmDetails.remove()
-}
+const $sidebarContent=document.getElementById('sidebar_content')
+if (!$sidebarContent) return
 
-const $browseSection=document.querySelector('#sidebar_content > .browse-section')
-if ($browseSection) {
-	let hotosmProjectId
-	const $comment=$browseSection.querySelector(':scope > p.fst-italic')
-	if ($comment) {
-		hotosmProjectId=matchHotosmProjectId($comment.textContent)
+insertDetails()
+new MutationObserver(()=>{
+	insertDetails()
+}).observe($sidebarContent,{childList:true})
+
+function insertDetails() {
+	let $browseSection,hotosmProjectId
+	if (location.pathname.startsWith('/changeset/')) {
+		$browseSection=$sidebarContent.querySelector(':scope > .browse-section')
 	}
-	const $tagsContainer=$browseSection.querySelector(':scope > .rounded')
-	if ($tagsContainer) {
-		const $tags=$browseSection.querySelector('table.browse-tag-list')
-		// TODO parse tags
+	if ($browseSection) {
+		const $comment=$browseSection.querySelector(':scope > p.fst-italic')
+		if ($comment) {
+			hotosmProjectId=matchHotosmProjectId($comment.textContent)
+		}
+		const $tagsContainer=$browseSection.querySelector(':scope > .rounded')
+		if ($tagsContainer) {
+			const $tags=$browseSection.querySelector('table.browse-tag-list')
+			// TODO parse tags
+		}
 	}
-	const $discussion=$browseSection.querySelector(':scope > .row')
-	if (hotosmProjectId!=null && $discussion) {
-		const $tmDetails=makeProjectDetails(hotosmProjectId)
-		$discussion.prepend($tmDetails)
+	let $oldTmDetails=document.getElementById('osm-tm-peek-details')
+	if ($oldTmDetails && (hotosmProjectId==null || hotosmProjectId!=$oldTmDetails.dataset.id)) {
+		$oldTmDetails.remove()
+		$oldTmDetails=null
+	}
+	if ($browseSection && !$oldTmDetails && hotosmProjectId!=null) {
+		const $discussion=$browseSection.querySelector(':scope > .row')
+		if ($discussion) {
+			const $tmDetails=makeProjectDetails(hotosmProjectId)
+			$discussion.prepend($tmDetails)
+		}
 	}
 }
 

@@ -9,7 +9,7 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["https://www.openstreetmap.org/changeset/*"],
+			"matches": ["https://www.openstreetmap.org/*"],
 			"js": ["changeset.js"]
 		}
 	],
