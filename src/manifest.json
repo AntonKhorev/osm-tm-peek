@@ -4,12 +4,19 @@
 	"name": "OSM Tasking Manager Peek",
 
 	"background": {
-		"scripts": ["background.js"]
+		"scripts": ["background.js"],
+		"type": "module"
 	},
 	"content_scripts": [
 		{
 			"matches": ["https://www.openstreetmap.org/changeset/*"],
 			"js": ["changeset.js"]
+		}
+	],
+	"web_accessible_resources": [
+		{
+			"matches": ["<all_urls>"],
+			"resources": ["tm.js"]
 		}
 	]
 }

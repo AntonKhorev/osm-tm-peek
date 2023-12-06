@@ -1,3 +1,5 @@
+import getHotosmApiProjectUrl from './tm.js'
+
 browser.runtime.onMessage.addListener(message=>{
 	if (message.action=='fetchProjectData') {
 		// can't do it from the content script because CSP header: content-security-policy: ... connect-src ...
@@ -17,10 +19,4 @@ async function fetchProjectData(id) {
 	}
 	// TODO cache data
 	return data
-}
-
-// TODO remove copypaste
-function getHotosmApiProjectUrl(id) {
-	// return `https://tasking-manager-tm4-production-api.hotosm.org/api/v2/projects/${id}`
-	return `https://tasking-manager-tm4-production-api.hotosm.org:443/api/v2/projects/${id}/`
 }
