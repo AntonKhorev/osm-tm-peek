@@ -105,25 +105,24 @@ async function loadProjectDetails() {
 			$name.textContent=data.projectInfo.name
 			$article.append($name)
 		}
-		if (window.osmTmPeekHookedMap) {
+		if (data.areaOfInterest || data.aoiBBOX || data.countryTag) {
+			const $div=document.createElement('div')
+			$div.classList.add('d-flex','mb-2','align-items-center','gap-1')
 			let aoiBounds
-			if (data?.areaOfInterest) {
+			if (data.areaOfInterest) {
 				const geometry=cloneInto(data.areaOfInterest,window)
 				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry)
 			}
-			if (data?.aoiBBOX) {
+			if (data.aoiBBOX) {
 				const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
 				aoiBounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
 				if (!aoiLayer) {
 					aoiLayer=window.wrappedJSObject.L.rectangle(aoiBounds)
 				}
 			}
-			aoiLayer?.addTo(window.osmTmPeekHookedMap)
-			const $div=document.createElement('div')
-			$div.classList.add('d-flex','mb-2','align-items-center','gap-1')
 			const $countries=document.createElement('span')
 			$countries.classList.add('me-auto')
-			if (Array.isArray(data?.countryTag)) {
+			if (Array.isArray(data.countryTag)) {
 				for (const country of data.countryTag) {
 					if ($countries.childElementCount) {
 						$countries.append(`, `)
@@ -134,31 +133,38 @@ async function loadProjectDetails() {
 				}
 			}
 			$div.append($countries)
-			const flyOptions=cloneInto({duration:1},window)
-			if (window.osmTmPeekHookedMap.wrappedJSObject._object) {
-				const $fit=document.createElement('button')
-				$fit.classList.add('btn','btn-outline-warning','btn-sm','border-2')
-				$fit.style.borderStyle='dashed'
-				$fit.textContent='Cset'
-				$fit.dataset.bsTitle=`Zoom to changeset`
-				$fit.onclick=()=>{
-					const changesetBounds=window.osmTmPeekHookedMap.wrappedJSObject._objectLayer.getBounds()
-					window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(changesetBounds,flyOptions)
+			if (window.osmTmPeekHookedMap) {
+				aoiLayer?.addTo(window.osmTmPeekHookedMap)
+				const flyOptions=cloneInto({duration:1},window)
+				if (window.osmTmPeekHookedMap.wrappedJSObject._object) {
+					const $fit=document.createElement('button')
+					$fit.classList.add('btn','btn-outline-warning','btn-sm','border-2')
+					$fit.style.borderStyle='dashed'
+					$fit.textContent='Cset'
+					$fit.onclick=()=>{
+						const changesetBounds=window.osmTmPeekHookedMap.wrappedJSObject._objectLayer.getBounds()
+						window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(changesetBounds,flyOptions)
+					}
+					$div.append($fit)
+					addTooltip($fit,`Zoom to changeset`)
 				}
-				$div.append($fit)
-				new window.wrappedJSObject.bootstrap.Tooltip($fit)
-			}
-			if (aoiBounds) {
-				const $fit=document.createElement('button')
-				$fit.classList.add('btn','btn-outline-primary','btn-sm','border-2')
-				$fit.style.borderStyle='dashed'
-				$fit.textContent='AOI'
-				$fit.dataset.bsTitle=`Zoom to project area of interest`
-				$fit.onclick=()=>{
-					window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(aoiBounds,flyOptions)
+				if (aoiBounds) {
+					const $fit=document.createElement('button')
+					$fit.classList.add('btn','btn-outline-primary','btn-sm','border-2')
+					$fit.style.borderStyle='dashed'
+					$fit.textContent='AOI'
+					$fit.onclick=()=>{
+						window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(aoiBounds,flyOptions)
+					}
+					$div.append($fit)
+					addTooltip($fit,`Zoom to project area of interest`)
 				}
+			} else {
+				const $fit=document.createElement('button')
+				$fit.classList.add('btn','btn-outline-danger','btn-sm','border-2')
+				$fit.textContent='!!!'
 				$div.append($fit)
-				new window.wrappedJSObject.bootstrap.Tooltip($fit)
+				addTooltip($fit,`The map object wasn't captured by the extension during the page initialization. Reload the page with the extension enabled to see areas of interest on the map.`)
 			}
 			$article.append($div)
 		}
@@ -245,6 +251,11 @@ async function loadProjectDetails() {
 function clearAoiLayer() {
 	aoiLayer?.remove()
 	aoiLayer=undefined
+}
+
+function addTooltip($e,text) {
+	$e.dataset.bsTitle=text
+	new window.wrappedJSObject.bootstrap.Tooltip($e)
 }
 
 })()
