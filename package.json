@@ -1,6 +1,6 @@
 {
   "name": "osm-tm-peek",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Firefox browser extension for OpenStreetMap to enhance changeset pages with data from Tasking Manager",
   "main": "index.js",
   "scripts": {
