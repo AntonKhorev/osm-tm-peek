@@ -1,0 +1,14 @@
+{
+  "name": "osm-tm-peek",
+  "version": "0.0.0",
+  "description": "Firefox browser extension for OpenStreetMap to enhance changeset pages with data from Tasking Manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Khorev",
+  "license": "MIT",
+  "devDependencies": {
+    "web-ext": "^7.9.0"
+  }
+}
