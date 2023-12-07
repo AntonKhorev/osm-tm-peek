@@ -23,5 +23,11 @@
 			"matches": ["<all_urls>"],
 			"resources": ["tm.js"]
 		}
-	]
+	],
+
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "osm-tm-peek@antonkhorev.github.io"
+		}
+	}
 }
