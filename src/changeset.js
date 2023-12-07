@@ -109,15 +109,16 @@ async function loadProjectDetails() {
 			const $div=document.createElement('div')
 			$div.classList.add('d-flex','mb-2','align-items-center','gap-1')
 			let aoiBounds
+			const aoiStyle=cloneInto({color:'#46a',fillOpacity:.1},window)
 			if (data.areaOfInterest) {
 				const geometry=cloneInto(data.areaOfInterest,window)
-				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry)
+				aoiLayer=window.wrappedJSObject.L.geoJSON(geometry,aoiStyle)
 			}
 			if (data.aoiBBOX) {
 				const [minLon,minLat,maxLon,maxLat]=data.aoiBBOX
 				aoiBounds=cloneInto([[minLat,minLon],[maxLat,maxLon]],window)
 				if (!aoiLayer) {
-					aoiLayer=window.wrappedJSObject.L.rectangle(aoiBounds)
+					aoiLayer=window.wrappedJSObject.L.rectangle(aoiBounds,aoiStyle)
 				}
 			}
 			const $countries=document.createElement('span')
@@ -138,8 +139,7 @@ async function loadProjectDetails() {
 				const flyOptions=cloneInto({duration:1},window)
 				if (window.osmTmPeekHookedMap.wrappedJSObject._object) {
 					const $fit=document.createElement('button')
-					$fit.classList.add('btn','btn-outline-warning','btn-sm','border-2')
-					$fit.style.borderStyle='dashed'
+					setFitButtonStyle($fit,'#ff9500','#ffffc0')
 					$fit.textContent='Cset'
 					$fit.onclick=()=>{
 						const changesetBounds=window.osmTmPeekHookedMap.wrappedJSObject._objectLayer.getBounds()
@@ -150,8 +150,7 @@ async function loadProjectDetails() {
 				}
 				if (aoiBounds) {
 					const $fit=document.createElement('button')
-					$fit.classList.add('btn','btn-outline-primary','btn-sm','border-2')
-					$fit.style.borderStyle='dashed'
+					setFitButtonStyle($fit,'#46a','#8af')
 					$fit.textContent='AOI'
 					$fit.onclick=()=>{
 						window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(aoiBounds,flyOptions)
@@ -161,7 +160,7 @@ async function loadProjectDetails() {
 				}
 			} else {
 				const $fit=document.createElement('button')
-				$fit.classList.add('btn','btn-outline-danger','btn-sm','border-2')
+				$fit.classList.add('btn','btn-outline-warning','btn-sm','border-2')
 				$fit.textContent='!!!'
 				$div.append($fit)
 				addTooltip($fit,`The map object wasn't captured by the extension during the page initialization. Reload the page with the extension enabled to see areas of interest on the map.`)
@@ -256,6 +255,15 @@ function clearAoiLayer() {
 function addTooltip($e,text) {
 	$e.dataset.bsTitle=text
 	new window.wrappedJSObject.bootstrap.Tooltip($e)
+}
+
+function setFitButtonStyle($fit,strokeColor,fillColor) {
+	$fit.classList.add('btn','btn-outline-info','btn-sm','border-2')
+	$fit.style.borderStyle='dashed'
+	$fit.style.setProperty('--bs-btn-color',strokeColor)
+	$fit.style.setProperty('--bs-btn-border-color',strokeColor)
+	$fit.style.setProperty('--bs-btn-hover-bg',fillColor)
+	$fit.style.setProperty('--bs-btn-hover-border-color',strokeColor)
 }
 
 })()
