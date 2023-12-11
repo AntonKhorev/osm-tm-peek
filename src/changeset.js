@@ -124,17 +124,12 @@ async function loadProjectDetails() {
 			const $countries=document.createElement('span')
 			$countries.classList.add('me-auto')
 			if (Array.isArray(data.countryTag)) {
-				const $icon=document.createElement('img')
-				$icon.src=browser.runtime.getURL('svg/marker.svg')
-				$icon.alt=`Location`
-				$div.append($icon)
+				$div.append(makeIcon('marker',`Location`))
 				for (const country of data.countryTag) {
 					if ($countries.childElementCount) {
 						$countries.append(`, `)
 					}
-					const $country=document.createElement('strong')
-					$country.textContent=country
-					$countries.append($country)
+					$countries.append(strong(country))
 				}
 			}
 			$div.append($countries)
@@ -168,6 +163,15 @@ async function loadProjectDetails() {
 				$fit.textContent='!!!'
 				$div.append($fit)
 				addTooltip($fit,`The map object wasn't captured by the extension during the page initialization. Reload the page with the extension enabled to see areas of interest on the map.`)
+			}
+			$article.append($div)
+		}
+		if (data.imagery || data.mappingTypes) {
+			const $div=document.createElement('div')
+			$div.classList.add('d-flex','mb-2','align-items-center','gap-1')
+			if (data.imagery) {
+				$div.append(makeIcon('imagery',`Imagery`))
+				$div.append(strong(data.imagery))
 			}
 			$article.append($div)
 		}
@@ -268,6 +272,19 @@ function setFitButtonStyle($fit,strokeColor,fillColor) {
 	$fit.style.setProperty('--bs-btn-border-color',strokeColor)
 	$fit.style.setProperty('--bs-btn-hover-bg',fillColor)
 	$fit.style.setProperty('--bs-btn-hover-border-color',strokeColor)
+}
+
+function makeIcon(name,title) {
+	const $icon=document.createElement('img')
+	$icon.src=browser.runtime.getURL(`svg/${name}.svg`)
+	$icon.alt=title
+	return $icon
+}
+
+function strong(text) {
+	const $e=document.createElement('strong')
+	$e.textContent=text
+	return $e
 }
 
 })()
