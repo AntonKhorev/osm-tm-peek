@@ -173,6 +173,27 @@ async function loadProjectDetails() {
 				$div.append(makeIcon('imagery',`Imagery`))
 				$div.append(strong(data.imagery))
 			}
+			if (data.imagery && data.mappingTypes) {
+				const $arrow=document.createElement('span')
+				$arrow.classList.add('mx-auto')
+				$arrow.textContent=`→`
+				$div.append($arrow)
+			}
+			let mappingTypes=new Set()
+			if (Array.isArray(data.mappingTypes)) {
+				mappingTypes=new Set(data.mappingTypes)
+			}
+			for (const [type,name] of [
+				['ROADS','road'],
+				['BUILDINGS','building'],
+				['WATERWAYS','water'],
+				['LAND_USE','landuse'],
+				['OTHER','other'],
+			]) {
+				const $icon=makeIcon(name,mappingTypes.has(type)?type:`NO ${type}`)
+				if (!mappingTypes.has(type)) $icon.classList.add('opacity-25')
+				$div.append($icon)
+			}
 			$article.append($div)
 		}
 		if (data?.projectInfo?.shortDescription || data?.projectInfo?.longDescription) {
@@ -277,7 +298,7 @@ function setFitButtonStyle($fit,strokeColor,fillColor) {
 function makeIcon(name,title) {
 	const $icon=document.createElement('img')
 	$icon.src=browser.runtime.getURL(`svg/${name}.svg`)
-	$icon.alt=title
+	$icon.alt=$icon.title=title
 	return $icon
 }
 
