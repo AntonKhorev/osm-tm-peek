@@ -21,7 +21,7 @@
 	"web_accessible_resources": [
 		{
 			"matches": ["<all_urls>"],
-			"resources": ["tm.js"]
+			"resources": ["tm.js","svg/*"]
 		}
 	],
 

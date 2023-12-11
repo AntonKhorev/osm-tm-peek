@@ -124,6 +124,10 @@ async function loadProjectDetails() {
 			const $countries=document.createElement('span')
 			$countries.classList.add('me-auto')
 			if (Array.isArray(data.countryTag)) {
+				const $icon=document.createElement('img')
+				$icon.src=browser.runtime.getURL('svg/marker.svg')
+				$icon.alt=`Location`
+				$div.append($icon)
 				for (const country of data.countryTag) {
 					if ($countries.childElementCount) {
 						$countries.append(`, `)
