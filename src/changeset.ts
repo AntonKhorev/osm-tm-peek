@@ -294,11 +294,19 @@ function setFitButtonStyle($fit,strokeColor,fillColor) {
 	$fit.style.setProperty('--bs-btn-hover-border-color',strokeColor)
 }
 
-function makeIcon(name: string, title: string): HTMLElement {
-	const $icon=document.createElement('span')
-	$icon.innerHTML=svgData[name]
-	$icon.title=title
-	return $icon
+function makeIcon(name: string, title: string): Element {
+	const $svg=new DOMParser().parseFromString(svgData[name],'image/svg+xml').firstChild
+	if ($svg instanceof SVGElement) {
+		const $title=document.createElementNS('http://www.w3.org/2000/svg','title')
+		$title.textContent=title
+		$svg.prepend($title)
+		return $svg
+	} else {
+		const $stub=document.createElement('span')
+		$stub.textContent=title
+		$stub.title=title
+		return $stub
+	}
 }
 
 function strong(text) {
