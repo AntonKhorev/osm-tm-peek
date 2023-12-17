@@ -1,4 +1,5 @@
 import getHotosmApiProjectUrl from './tm'
+import svgData from './svg-data'
 
 let aoiLayer: any
 const $sidebarContent=document.getElementById('sidebar_content')
@@ -293,10 +294,10 @@ function setFitButtonStyle($fit,strokeColor,fillColor) {
 	$fit.style.setProperty('--bs-btn-hover-border-color',strokeColor)
 }
 
-function makeIcon(name,title) {
-	const $icon=document.createElement('img')
-	$icon.src=browser.runtime.getURL(`svg/${name}.svg`)
-	$icon.alt=$icon.title=title
+function makeIcon(name: string, title: string): HTMLElement {
+	const $icon=document.createElement('span')
+	$icon.innerHTML=svgData[name]
+	$icon.title=title
 	return $icon
 }
 

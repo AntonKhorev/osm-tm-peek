@@ -17,12 +17,6 @@
 			"run_at": "document_start"
 		}
 	],
-	"web_accessible_resources": [
-		{
-			"matches": ["<all_urls>"],
-			"resources": ["svg/*"]
-		}
-	],
 
 	"browser_specific_settings": {
 		"gecko": {

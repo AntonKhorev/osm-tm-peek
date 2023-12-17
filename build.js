@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises'
 import { rollup } from 'rollup'
 import typescript from '@rollup/plugin-typescript'
+import virtual from '@rollup/plugin-virtual'
 
 await build('src','dist')
 
@@ -18,7 +19,13 @@ async function cleanupDirectory(dir) {
 }
 
 async function buildJs(srcDir,dstDir) {
-	const plugins=[typescript()]
+	const svgData=await readSvgData(srcDir)
+	const plugins=[
+		virtual({
+			[`${srcDir}/svg-data`]: `export default `+JSON.stringify(svgData,undefined,4)
+		}),
+		typescript()
+	]
 	const bundleRootModules=['background','init','changeset']
 	for (const module of bundleRootModules) {
 		const bundle=await rollup({
@@ -30,4 +37,16 @@ async function buildJs(srcDir,dstDir) {
 		})
 		bundle.close()
 	}
+}
+
+async function readSvgData(srcDir) {
+	const svgData={}
+	for (const filename of await fs.readdir(`${srcDir}/svg`)) {
+		const match=filename.match(/^(.*)\.svg$/)
+		if (!match) continue
+		const [,name]=match
+		const svg=await fs.readFile(`${srcDir}/svg/${filename}`,'utf-8')
+		svgData[name]=svg
+	}
+	return svgData
 }
