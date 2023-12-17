@@ -1,19 +1,17 @@
-(async()=>{
+import getHotosmApiProjectUrl from './tm'
 
-const {default:getHotosmApiProjectUrl}=await import(browser.runtime.getURL('tm.js'))
-
+let aoiLayer: any
 const $sidebarContent=document.getElementById('sidebar_content')
-if (!$sidebarContent) return
 
-let aoiLayer
+if ($sidebarContent instanceof HTMLElement) {
+	insertDetails($sidebarContent)
+	new MutationObserver(()=>{
+		clearAoiLayer()
+		insertDetails($sidebarContent)
+	}).observe($sidebarContent,{childList:true})
+}
 
-insertDetails()
-new MutationObserver(()=>{
-	clearAoiLayer()
-	insertDetails()
-}).observe($sidebarContent,{childList:true})
-
-function insertDetails() {
+function insertDetails($sidebarContent: HTMLElement) {
 	let $browseSection,hotosmProjectId
 	if (location.pathname.startsWith('/changeset/')) {
 		$browseSection=$sidebarContent.querySelector(':scope > .browse-section')
@@ -133,16 +131,16 @@ async function loadProjectDetails() {
 				}
 			}
 			$div.append($countries)
-			if (window.osmTmPeekHookedMap) {
-				aoiLayer?.addTo(window.osmTmPeekHookedMap)
+			if (window.browserExtensionHookedMap) {
+				aoiLayer?.addTo(window.browserExtensionHookedMap)
 				const flyOptions=cloneInto({duration:1},window)
-				if (window.osmTmPeekHookedMap.wrappedJSObject._object) {
+				if (window.browserExtensionHookedMap.wrappedJSObject._object) {
 					const $fit=document.createElement('button')
 					setFitButtonStyle($fit,'#ff9500','#ffffc0')
 					$fit.textContent='Cset'
 					$fit.onclick=()=>{
-						const changesetBounds=window.osmTmPeekHookedMap.wrappedJSObject._objectLayer.getBounds()
-						window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(changesetBounds,flyOptions)
+						const changesetBounds=window.browserExtensionHookedMap.wrappedJSObject._objectLayer.getBounds()
+						window.browserExtensionHookedMap.wrappedJSObject.flyToBounds(changesetBounds,flyOptions)
 					}
 					$div.append($fit)
 					addTooltip($fit,`Zoom to changeset`)
@@ -152,7 +150,7 @@ async function loadProjectDetails() {
 					setFitButtonStyle($fit,'#46a','#8af')
 					$fit.textContent='AOI'
 					$fit.onclick=()=>{
-						window.osmTmPeekHookedMap.wrappedJSObject.flyToBounds(aoiBounds,flyOptions)
+						window.browserExtensionHookedMap.wrappedJSObject.flyToBounds(aoiBounds,flyOptions)
 					}
 					$div.append($fit)
 					addTooltip($fit,`Zoom to project area of interest`)
@@ -307,5 +305,3 @@ function strong(text) {
 	$e.textContent=text
 	return $e
 }
-
-})()

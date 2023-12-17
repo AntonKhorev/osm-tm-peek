@@ -1,6 +1,11 @@
-import getHotosmApiProjectUrl from './tm.js'
+import getHotosmApiProjectUrl from './tm'
 
-const projectDataCache=new Map()
+type ProjectCacheRecord = {
+	timestamp: number
+	data: object
+}
+
+const projectCache=new Map<number,ProjectCacheRecord>()
 
 browser.runtime.onMessage.addListener(message=>{
 	if (message.action=='fetchProjectData') {
@@ -10,22 +15,24 @@ browser.runtime.onMessage.addListener(message=>{
 	return false
 })
 
-async function fetchProjectData(id) {
+async function fetchProjectData(id: number): Promise<object|null> {
 	const now=Date.now()
-	if (projectDataCache.has(id)) {
-		const {timestamp,data}=projectDataCache.get(id)
+	const projectCacheRecord=projectCache.get(id)
+	if (projectCacheRecord) {
+		const {timestamp,data}=projectCacheRecord
 		if (timestamp>=now-5*60*1000) {
 			return data
 		}
 	}
-	let data
+	let data: object|null
 	try {
 		const response=await fetch(getHotosmApiProjectUrl(id))
 		if (!response.ok) throw new Error
 		data=await response.json()
+		if (!data || typeof data != 'object') return null
 	} catch {
 		return null
 	}
-	projectDataCache.set(id,{timestamp:now,data})
+	projectCache.set(id,{timestamp:now,data})
 	return data
 }
