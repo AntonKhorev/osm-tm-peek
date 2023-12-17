@@ -18,8 +18,10 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
+      - name: Compile to javascript
+        run: npm run build
       - name: Create an extension package
-        run: npx web-ext build -s src
+        run: npx web-ext build -s dist
       - name: Add the package to the release
         run: gh release upload ${{github.event.release.tag_name}} web-ext-artifacts/*.zip
         env:

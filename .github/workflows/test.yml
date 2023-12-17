@@ -1,4 +1,4 @@
-name: Tests
+name: Test
 
 on: [push, pull_request]
 
@@ -6,9 +6,6 @@ jobs:
   web-ext-lint:
     name: Lint with web-ext
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -16,5 +13,8 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
+      - name: Compile to javascript
+        run: npm run build
+
       - name: Run web-ext
-        run: npx web-ext lint -s src
+        run: npx web-ext lint -s dist
